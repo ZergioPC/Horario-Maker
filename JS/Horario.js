@@ -1,4 +1,15 @@
 import Nodo from "./Nodo.js";
+import Materia from "./Materia.js";
+
+/**
+ * Clase de error personalizado
+ */
+class MateriaColisionError extends Error {
+    constructor(mensaje, datos) {
+        super(mensaje);
+        this.datos = datos;          // payload con la info de colisión
+    }
+}
 
 /**
  * Clase que controla globalmente la logica del Horario (Creacion, dibujado, anexión de
@@ -10,12 +21,17 @@ class Horario{
      *
      * @param {JSON} materias - Listado de materias disponibles
      * @param {Array[string]} colores - Listado de colores disponibles
+     * @param {number} maxCreditos - Número máximo de creditos
      */
-    constructor(colores){
-        this.materias = [];     // Array de Nodos
-        this.colorCounter = 0;
-        this.coloresClases = colores;
-        this.isColide = false;
+    constructor(colores,maxCreditos){
+        this.materias = [];                 // Array de Nodos
+        this.colorCounter = 0;              // Selector de colores
+        this.coloresClases = colores;       // Lista de colores
+        this.isColide = false;              // ¿Hay materias cruzadas?
+        this.creditosMax = maxCreditos;     // Contador de creditos
+        this.creditosCounter = 0            // Limite máximo de creditos
+        this.historialBack = []             // Historial deshacer
+        this.historialFront = []            // Historial rehacer
     }
 
     /**
@@ -44,6 +60,13 @@ class Horario{
      */
     agregar(nodo){
         try{
+            if ((nodo.creditos + this.creditosCounter) > this.creditosMax){
+                throw new Error(
+                    `Limite de creditos Superados: ` +
+                    `La materia ${nodo.data.nombre} tiene ${nodo.creditos} ` +
+                    `Añadirla supera el limite de creditos que es ${this.creditosMax}.`
+                );
+            }
             nodo.posiciones.forEach(([horaNew, diaNew]) => {
                 this.materias.forEach(materia => {
                     materia.posiciones.forEach(([horaOld, diaOld]) => {
@@ -52,20 +75,25 @@ class Horario{
                             // Si coincide, lanzamos un Error con detalle
                             const nombreNew = nodo.nombre || 'Materia Nueva';
                             const nombreOld  = materia.nombre || 'Materia Existente';
-                            throw new Error(
+                            throw new MateriaColisionError(
                                 `Solapamiento detectado: ` +
                                 `${nombreNew} en [hora=${horaNew}, día=${diaNew}] ` +
-                                `coincide con ${nombreOld}.`
-                            );
+                                `coincide con ${nombreOld}.`,
+                                [nodo,materia]
+                            )
+                        }else{
+                            this.isColide = false;
                         }
                     });
                 });
             });
         }catch(e){
             console.error(e.message);
+            console.log(e.datos);
         }finally{
             if (!this.isColide) {
                 this.materias.push(nodo);
+                this.creditosCounter += nodo.creditos;
             }
         }
     }
@@ -73,8 +101,7 @@ class Horario{
     /**
      * Elimina las materias del Horario
      *
-     * @param {Array[Array[2]]} posicionList - Array de las coordenadas [Hora , Dia] de cada hora de clase de la materia
-     * @param {Object} materiaData - Objeto Diccionario con los datos de la materia
+     * @param {number} id - id de la materia a borrar
      */
     eliminar(id){
         this.materias = this.materias.filter(nodo => nodo.id !== id);

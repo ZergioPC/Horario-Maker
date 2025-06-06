@@ -14,8 +14,9 @@ class Nodo{
      * @param {Array[Array[2]]} posicion - Array de las coordenadas [Hora , Dia] de cada hora de clase de la materia.
      * @param {String} colorClase - String de la clase que da color a la materia de forma global.
      */
-    constructor(id, data, posicion, colorClase){
+    constructor(id, creditos, data, posicion, colorClase){
         this.id = id;
+        this.creditos = creditos;
         this.data = data;
         this.posiciones = posicion;
         this.color = colorClase;

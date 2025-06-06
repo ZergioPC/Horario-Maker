@@ -17,13 +17,14 @@ const coloresPastel = [
 
 const $horarioTabla = document.getElementById("horario-tabla");
 
-const test = new Horario(coloresPastel);
+const test = new Horario(coloresPastel,9);
 
-const caclulo = new Nodo(100,new Materia("calc","xd"),[[1,2],[2,2]]);
-const caclulo2 = new Nodo(300,new Materia("calc2","xd"),[[1,2],[2,2]]);
-const fisica = new Nodo(200,new Materia("fis","xd"),[[1,3],[3,2]]);
+const caclulo = new Nodo(100,3,new Materia("calc","xd"),[[1,2],[2,2]]);
+const caclulo2 = new Nodo(300,3,new Materia("calc2","xd"),[[1,2],[2,2]]);
+const fisica = new Nodo(200,3,new Materia("fis","xd"),[[1,3],[3,2]]);
 
 // Horario [10 x 6] [Hora , Dia]
+// const matriz = Array.from({ length: 6 }, () => Array(10).fill(5));
 
 test.agregar(caclulo)
 test.agregar(fisica)
