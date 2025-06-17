@@ -20,14 +20,40 @@
         <table id="horario-tabla"></table>
     </main>
     <aside>
-        <div>Creditos</div>
-        <ul>
+        <div>
+            <p>Horario Actual</p>
+            <p id="actualHorario">Horario Prueba</p>
+            <p id="actualCreditos">0 creditos</p>
+            <p id="actualMaxCreditos">0 max</p>
+        </div>
+        <button id="btnCrearMateria">+</button>
+        <ul id="listMaterias">
             <!-- Agregar Materias -->
         </ul>
     </aside>
     <footer>
         <!-- Creditos finales -->
     </footer>
+    <div role="dialog">
+        <dialog id="formAddMateria">
+            <label for="addMatNombre">
+                <span>Nombre</span><input id="addMatNombre" type="text" placeholder="Cálculo">
+            </label>
+            <label for="addMatGrupo">
+                <span>Grupo</span><input id="addMatGrupo" type="text" placeholder="AMB A">
+            </label>
+            <label for="addMatBtnFecha">
+                <span>Añadir día</span><button id="addMatBtnFecha">+</button>
+            </label>
+            <form id="addMatFechas">
+                <!-- Dias añadidos -->
+            </form>
+            <div>
+                <button id="addConfirm">Añadir</button>
+                <button id="addCancel">Cancelar</button>
+            </div>
+        </dialog>
+    </div>
     <script type="module" src="./main.js"></script>
 </body>
 </html>

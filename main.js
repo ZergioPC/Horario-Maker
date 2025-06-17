@@ -2,6 +2,8 @@ import Horario from "./JS/Horario.js";
 import Nodo from "./JS/Nodo.js";
 import Materia from "./JS/Materia.js";
 
+//MARK: Clases DOM
+
 class ItemDom {
   /**
    * Clase auxiliar para controlar la informacion mostrada en la UI del horario
@@ -117,8 +119,111 @@ const coloresPastel = [
   "#D8BFD8"  // Lila pastel
 ];
 
-const $horarioTabla = document.getElementById("horario-tabla");
+const GLOBAL_MATERIAS = []
 
+const $horarioTabla = document.getElementById("horario-tabla");
+const $btnCrearMateria = document.getElementById("btnCrearMateria");
+const $ulMateriasList = document.getElementById("listMaterias");
+
+
+//MARK: Crear Materia
+
+const dialog =  document.getElementById("formAddMateria");
+const nombre = document.getElementById("addMatNombre");
+const grupo = document.getElementById("addMatGrupo");
+const btnDate = document.getElementById("addMatBtnFecha");
+const dateContainer = document.getElementById("addMatFechas");
+const btnAdd = document.getElementById("addConfirm");
+const btnCancel = document.getElementById("addCancel");
+
+$btnCrearMateria.addEventListener('click',function(){
+  dialog.showModal();
+});
+
+btnAdd.addEventListener("click", function(){
+  const fechas = [];
+  dateContainer.querySelectorAll("div").forEach( div =>{
+    fechas.push({
+      day: div.querySelector('select[name="day"]').value,
+      start: div.querySelector('input[name="start"]').value,
+      end: div.querySelector('input[name="end"]').value
+    });
+  });
+  const data = [
+    nombre.value,
+    grupo.value,
+    fechas
+  ];
+  nombre.value = '';
+  grupo.value = '';
+  dateContainer.innerHTML = "";
+  dialog.close();
+  GLOBAL_MATERIAS.push[data];
+});
+
+btnCancel.addEventListener("click", function(){
+  dialog.close();
+});
+
+btnDate.addEventListener("click", function(e){
+  // Label Day
+  const labelDay = document.createElement("label");
+  labelDay.setAttribute("for", "day");
+  labelDay.textContent = "Day of the week:";
+
+  // Select Day
+  const selectDay = document.createElement("select");
+  const listDays = ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes","Sabado"];
+  selectDay.id = "day";
+  selectDay.name = "day";
+  listDays.forEach(day => {
+    const option = document.createElement("option");
+    option.textContent = day;
+    option.setAttribute('value', listDays.indexOf(day));
+    selectDay.appendChild(option);
+  });
+
+  // Label Start
+  const labelStart = document.createElement("label");
+  labelStart.setAttribute("for", "start");
+  labelStart.textContent = "Start time:";
+
+  // Input Start
+  const inputStart = document.createElement("input");
+  inputStart.type = "time";
+  inputStart.id = "start";
+  inputStart.name = "start";
+
+  // Label End
+  const labelEnd = document.createElement("label");
+  labelEnd.setAttribute("for", "end");
+  labelEnd.textContent = "End time:";
+
+  // Input End
+  const inputEnd = document.createElement("input");
+  inputEnd.type = "time";
+  inputEnd.id = "end";
+  inputEnd.name = "end";
+
+  // Button borrar
+  const btnBorrar = document.createElement("button");
+  btnBorrar.textContent = "borrar";
+  btnBorrar.addEventListener('click',function(){
+    this.parentNode.remove();
+  });
+
+  const div = document.createElement('div');
+  div.appendChild(labelDay);
+  div.appendChild(selectDay);
+  div.appendChild(labelStart);
+  div.appendChild(inputStart);
+  div.appendChild(labelEnd);
+  div.appendChild(inputEnd);
+  div.appendChild(btnBorrar);
+
+  dateContainer.appendChild(div);
+});
+/* 
 const test = new Horario(coloresPastel,9);
 const testDom = new TablaDom($horarioTabla);
 
@@ -133,5 +238,5 @@ test.agregar(caclulo2)
 //test.eliminar(100)
 
 testDom.dibujar(test.materias)
-
 //test._printLista()
+*/
