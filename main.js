@@ -3,6 +3,26 @@ import Nodo from "./JS/Nodo.js";
 import Materia from "./JS/Materia.js";
 import { ItemDom, TablaDom } from "./JS/DomClasses.js";
 
+class LogicalHourError extends Error {  
+  /**
+   * Clase de error personalizado
+   */
+  constructor(mensaje, datos) {
+    super(mensaje);
+    this.datos = datos;      // payload con la info de colisión
+  }
+}
+
+class EmptyDataError extends Error {  
+  /**
+   * Clase de error personalizado
+   */
+  constructor(mensaje,datos) {
+    super(mensaje);
+    this.datos = datos;      // payload con la info de colisión
+  }
+}
+
 const coloresPastel = [
   "#FFD1DC", // Rosa pastel
   "#FFEBB7", // Amarillo pastel
@@ -17,38 +37,91 @@ const coloresPastel = [
 ];
 
 const GLOBAL_MATERIAS = []
+let GLOBAL_IdCounter = 0;
 
 const $horarioTabla = document.getElementById("horario-tabla");
 const $btnCrearMateria = document.getElementById("btnCrearMateria");
 const $ulMateriasList = document.getElementById("listMaterias");
 
 
-//MARK: Crear Materia
+//MARK: Aside
 
-const dialog =  document.getElementById("formAddMateria");
-const nombre = document.getElementById("addMatNombre");
-const grupo = document.getElementById("addMatGrupo");
-const btnDate = document.getElementById("addMatBtnFecha");
-const dateContainer = document.getElementById("addMatFechas");
-const btnAdd = document.getElementById("addConfirm");
-const btnCancel = document.getElementById("addCancel");
+function updateMateriasListDom(){
+  GLOBAL_MATERIAS.forEach(materia =>{
+    const li = document.createElement('li');
+    const btn = document.createElement('button');
+    btn.innerText = materia.data.nombre;
+    li.appendChild(btn);
+    $ulMateriasList.appendChild(li);
+  });
+}
 
-let logicalError = false;
+//MARK: POP-UP Materia
+
+const dialogAddMat =  document.getElementById("formAddMateria");
+const nombreAddMat = document.getElementById("addMatNombre");
+const grupoAddMat = document.getElementById("addMatGrupo");
+const creditosAddMat = document.getElementById("addMatCreditos");
+const btnDateMat = document.getElementById("addMatBtnFecha");
+const dateContainerMat = document.getElementById("addMatFechas");
+const btnAddMat = document.getElementById("addConfirm");
+const btnCancelMat = document.getElementById("addCancel");
+
+function parseDataToNodos(data){
+  const materia = new Materia(data[0],data[1]);
+  const dias = [];
+  data[2].forEach(fecha => {
+    if(Number(fecha.start) === Number(fecha.end)){
+      dias.push([Number(fecha.start),Number(fecha.day)]);
+    }else{
+      for (let i = Number(fecha.start); i <= Number(fecha.end); i++) {
+        dias.push([i,Number(fecha.day)]);
+      }
+    }
+  });
+  return new Nodo(GLOBAL_IdCounter,Number(data[3]),materia,dias,coloresPastel[0]);
+}
 
 $btnCrearMateria.addEventListener('click',function(){
-  dialog.showModal();
+  dialogAddMat.showModal();
 });
 
-btnAdd.addEventListener("click", function(){
+btnAddMat.addEventListener("click", function(){
   try{
+    if(nombreAddMat.value.trim() === ""){
+      throw new EmptyDataError(
+        "Ingrese el nombre de la Asignatura",
+        nombreAddMat
+      );
+    }
+    if(grupoAddMat.value.trim() === ""){
+      throw new EmptyDataError(
+        "Ingrese el nombre del Grupo",
+        grupoAddMat
+      );
+    }
+    if(Number(creditosAddMat.value) === 0){
+      throw new EmptyDataError(
+        "Los creditos deben ser mayores a 0",
+        creditosAddMat
+      );
+    }
+    if(dateContainerMat.querySelectorAll("div").length <= 0){
+      throw new EmptyDataError(
+        "No hay dias creados",
+        btnDateMat
+      );
+    }
+    
     const fechas = [];
-    dateContainer.querySelectorAll("div").forEach( div =>{
+    dateContainerMat.querySelectorAll("div").forEach( div =>{
       const dayData = div.querySelector('select[name="day"]').value;
       const startData = div.querySelector('select[name="Start"]').value;
       const endData = div.querySelector('select[name="End"]').value;
-      if (Number(startData) <= Number(endData)) {
-        throw new Error(
-          "La horas de inicio deben ser menores a las horas en que finalizan"
+      if (Number(startData) > Number(endData)) {
+        throw new LogicalHourError(
+          "La horas de inicio deben ser menores a las horas en que finalizan",
+          div
         );
       }
       fechas.push({
@@ -57,27 +130,37 @@ btnAdd.addEventListener("click", function(){
         end: endData
       });
     });
+
     const data = [
-      nombre.value,
-      grupo.value,
-      fechas
+      nombreAddMat.value,
+      grupoAddMat.value,
+      fechas,
+      creditosAddMat.value
     ];
-    nombre.value = '';
-    grupo.value = '';
-    dateContainer.innerHTML = "";
-    GLOBAL_MATERIAS.push(data);
-    dialog.close();
+    nombreAddMat.value = '';
+    grupoAddMat.value = '';
+    dateContainerMat.innerHTML = "";
+    GLOBAL_MATERIAS.push(parseDataToNodos(data));
+    dialogAddMat.close();
+    updateMateriasListDom();
   }catch(e){
-    console.log(e.message);
+    if (e instanceof LogicalHourError){
+      //Tratar el div donde hay error de horario
+      console.log(e.message);
+      console.log(e.datos);
+    }else if (e instanceof EmptyDataError){
+      //Tratar el input donde hay error de formulario
+      console.log(e.message);
+      console.log(e.datos);
+    }
   }
-  console.log(GLOBAL_MATERIAS);
 });
 
-btnCancel.addEventListener("click", function(){
-  dialog.close();
+btnCancelMat.addEventListener("click", function(){
+  dialogAddMat.close();
 });
 
-btnDate.addEventListener("click", function(e){
+btnDateMat.addEventListener("click", function(e){
   // Label Day
   const labelDay = document.createElement("label");
   labelDay.setAttribute("for", "day");
@@ -158,8 +241,9 @@ btnDate.addEventListener("click", function(e){
   div.appendChild(selectEnd);
   div.appendChild(btnBorrar);
 
-  dateContainer.appendChild(div);
+  dateContainerMat.appendChild(div);
 });
+
 /* 
 const test = new Horario(coloresPastel,9);
 const testDom = new TablaDom($horarioTabla);
