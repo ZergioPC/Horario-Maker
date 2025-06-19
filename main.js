@@ -1,110 +1,7 @@
 import Horario from "./JS/Horario.js";
 import Nodo from "./JS/Nodo.js";
 import Materia from "./JS/Materia.js";
-
-//MARK: Clases DOM
-
-class ItemDom {
-  /**
-   * Clase auxiliar para controlar la informacion mostrada en la UI del horario
-   * 
-   * @param {Boolean} isEmpty: Boolean indicating if the cell is empty.
-   * @param {Materia} data: The Materia data object.
-   * @param {String} nombre: Name of the subject.
-   * @param {String} grupo: Group of the subject.
-   * @param {Element} btnInfo: Button to show info about the subject.
-   * @param {Element} btnBorrar: Button to remove the subject.
-  */
-  constructor(){
-    this.isEmpty = true;
-    this.data = null;
-    this.nombre = "Materia";
-    this.grupo = "Grupo";
-    this.btnInfo = document.createElement('button');
-    this.btnBorrar = document.createElement('button');
-  }
-
-  /**
-   * Metodo para agregar los datos de una materia
-   * @param {Materia} data: Los datos de la materia
-  */ 
-  addMateria(data){
-    this.isEmpty = false;
-    this.data = data;
-    this.nombre = data.nombre;
-    this.grupo = data.grupo;
-
-    this.btnInfo.addEventListener('click',function(){
-      console.log(data);
-    });
-
-    this.btnBorrar.addEventListener('click',function(){
-      console.log('borrar');
-    });
-  }
-
-  /**
-   * Metodo que renderiza la informacion de la casilla del horario
-   * @returns Div Element
-   */
-  render(){
-    const div = document.createElement('div');
-
-    const nombreElem = document.createElement('span');
-    nombreElem.textContent = this.nombre;
-    div.appendChild(nombreElem);
-
-    const grupoElem = document.createElement('span');
-    grupoElem.textContent = this.grupo;
-    div.appendChild(grupoElem);
-
-    div.appendChild(this.btnInfo);
-    div.appendChild(this.btnBorrar);
-    return div;
-  }
-}
-
-// Horario [10 x 6] [Hora , Dia]
-class TablaDom {
-  /**
-   * Clase que gestiona la UI del horario en el DOM
-   * 
-   * @param {Element} tabla: Elemento Tabla del DOM.
-  */
-  constructor(tabla){
-    this.$tabla = tabla;
-  }
-
-  /**
-   * Metodo que dibuja la tabla segun los datos del horario
-   * 
-   * @param {Array[Materia]} datos: Lista de Materias
-  */
-  dibujar(datos){
-    this.$tabla.innerHTML = "";
-    const auxTabla = Array.from({ length: 10 }, () => Array.from({ length: 6 }, () => new ItemDom()));
-
-    datos.forEach(nodo => {
-      nodo.posiciones.forEach( ([hora,dia]) => {
-        auxTabla[hora][dia].addMateria(nodo.data);
-      });
-    });
-    
-    console.table(auxTabla)
-
-    for (let hora = 0; hora < auxTabla.length; hora++) {
-      const fila = document.createElement("tr");
-      for (let dia = 0; dia < auxTabla[hora].length; dia++) {
-        const celda = document.createElement("td");
-        
-        celda.appendChild(auxTabla[hora][dia].render())
-        
-        fila.appendChild(celda);
-      }
-      this.$tabla.appendChild(fila);
-    }
-  }
-}
+import { ItemDom, TablaDom } from "./JS/DomClasses.js";
 
 const coloresPastel = [
   "#FFD1DC", // Rosa pastel
@@ -136,29 +33,44 @@ const dateContainer = document.getElementById("addMatFechas");
 const btnAdd = document.getElementById("addConfirm");
 const btnCancel = document.getElementById("addCancel");
 
+let logicalError = false;
+
 $btnCrearMateria.addEventListener('click',function(){
   dialog.showModal();
 });
 
 btnAdd.addEventListener("click", function(){
-  const fechas = [];
-  dateContainer.querySelectorAll("div").forEach( div =>{
-    fechas.push({
-      day: div.querySelector('select[name="day"]').value,
-      start: div.querySelector('input[name="start"]').value,
-      end: div.querySelector('input[name="end"]').value
+  try{
+    const fechas = [];
+    dateContainer.querySelectorAll("div").forEach( div =>{
+      const dayData = div.querySelector('select[name="day"]').value;
+      const startData = div.querySelector('select[name="Start"]').value;
+      const endData = div.querySelector('select[name="End"]').value;
+      if (Number(startData) <= Number(endData)) {
+        throw new Error(
+          "La horas de inicio deben ser menores a las horas en que finalizan"
+        );
+      }
+      fechas.push({
+        day: dayData,
+        start: startData,
+        end: endData
+      });
     });
-  });
-  const data = [
-    nombre.value,
-    grupo.value,
-    fechas
-  ];
-  nombre.value = '';
-  grupo.value = '';
-  dateContainer.innerHTML = "";
-  dialog.close();
-  GLOBAL_MATERIAS.push[data];
+    const data = [
+      nombre.value,
+      grupo.value,
+      fechas
+    ];
+    nombre.value = '';
+    grupo.value = '';
+    dateContainer.innerHTML = "";
+    GLOBAL_MATERIAS.push(data);
+    dialog.close();
+  }catch(e){
+    console.log(e.message);
+  }
+  console.log(GLOBAL_MATERIAS);
 });
 
 btnCancel.addEventListener("click", function(){
@@ -183,16 +95,36 @@ btnDate.addEventListener("click", function(e){
     selectDay.appendChild(option);
   });
 
-  // Label Start
+  //Label Start
   const labelStart = document.createElement("label");
   labelStart.setAttribute("for", "start");
   labelStart.textContent = "Start time:";
 
-  // Input Start
-  const inputStart = document.createElement("input");
-  inputStart.type = "time";
-  inputStart.id = "start";
-  inputStart.name = "start";
+  // Select Start
+  const listTime = [
+    "6:00 am to 7:00 am",
+    "7:00 am to 8:00 am",
+    "8:00 am to 9:00 am",
+    "9:00 am to 10:00 am",
+    "10:00 am to 11:00 am",
+    "11:00 am to 12:00 pm",
+    "12:00 pm to 1:00 pm",
+    "1:00 pm to 2:00 pm",
+    "2:00 pm to 3:00 pm",
+    "3:00 pm to 4:00 pm",
+    "4:00 pm to 5:00 pm",
+    "5:00 pm to 6:00 pm"
+  ];
+
+  const selectStart = document.createElement("select");
+  selectStart.id = "Start";
+  selectStart.name = "Start";
+  listTime.forEach(hora => {
+    const option = document.createElement("option");
+    option.textContent = hora;
+    option.setAttribute('value', listTime.indexOf(hora));
+    selectStart.appendChild(option);
+  });
 
   // Label End
   const labelEnd = document.createElement("label");
@@ -200,10 +132,15 @@ btnDate.addEventListener("click", function(e){
   labelEnd.textContent = "End time:";
 
   // Input End
-  const inputEnd = document.createElement("input");
-  inputEnd.type = "time";
-  inputEnd.id = "end";
-  inputEnd.name = "end";
+  const selectEnd = document.createElement("select");
+  selectEnd.id = "End";
+  selectEnd.name = "End";
+  listTime.forEach(hora => {
+    const option = document.createElement("option");
+    option.textContent = hora;
+    option.setAttribute('value', listTime.indexOf(hora));
+    selectEnd.appendChild(option);
+  });
 
   // Button borrar
   const btnBorrar = document.createElement("button");
@@ -216,9 +153,9 @@ btnDate.addEventListener("click", function(e){
   div.appendChild(labelDay);
   div.appendChild(selectDay);
   div.appendChild(labelStart);
-  div.appendChild(inputStart);
+  div.appendChild(selectStart);
   div.appendChild(labelEnd);
-  div.appendChild(inputEnd);
+  div.appendChild(selectEnd);
   div.appendChild(btnBorrar);
 
   dateContainer.appendChild(div);
