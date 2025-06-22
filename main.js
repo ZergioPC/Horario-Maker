@@ -1,7 +1,7 @@
 import Horario from "./JS/Horario.js";
 import Nodo from "./JS/Nodo.js";
 import Materia from "./JS/Materia.js";
-import { ItemDom, TablaDom } from "./JS/DomClasses.js";
+import { TimeSlotDom, TablaDom } from "./JS/DomClasses.js";
 
 class LogicalHourError extends Error {  
   /**
@@ -39,23 +39,66 @@ const coloresPastel = [
 const GLOBAL_MATERIAS = []
 let GLOBAL_IdCounter = 0;
 
-const $horarioTabla = document.getElementById("horario-tabla");
+const HORARIOS_LIST = [new Horario(coloresPastel,30)];
+let ACTUAL_HORARIO = 0;
+
+
+//MARK: Main Tablas
+
+function removeMateriaTablaDom(id){
+  HORARIOS_LIST[ACTUAL_HORARIO].eliminar(id);
+  $horarioTablaDom.dibujar(HORARIOS_LIST[ACTUAL_HORARIO].materias);
+}
+
+const $horarioTablaDom = new TablaDom(document.getElementById("horario-tabla"),removeMateriaTablaDom);
+/* 
+const test = new Horario(coloresPastel,9);
+
+
+test.agregar(caclulo)
+test.agregar(fisica)
+test.agregar(caclulo2)
+//test.eliminar(100)
+
+$horarioTablaDom.dibujar(test.materias)
+//test._printLista()
+*/
+
+$horarioTablaDom.dibujar([]);
+//MARK: Aside
 const $btnCrearMateria = document.getElementById("btnCrearMateria");
 const $ulMateriasList = document.getElementById("listMaterias");
 
-
-//MARK: Aside
+function removeMateriasListDom(idx){
+  GLOBAL_MATERIAS.splice(idx,1);
+  console.log(GLOBAL_MATERIAS);
+  updateMateriasListDom()
+}
 
 function updateMateriasListDom(){
-  GLOBAL_MATERIAS.forEach(materia =>{
+  $ulMateriasList.innerHTML = "";
+  GLOBAL_MATERIAS.forEach((materia,index) => {
     const li = document.createElement('li');
-    const btn = document.createElement('button');
-    btn.innerText = materia.data.nombre;
-    li.appendChild(btn);
+    const btnAdd = document.createElement('button');
+    const btnDelete = document.createElement('button');
+
+    btnDelete.innerText = "x";
+    btnDelete.addEventListener('click',function(){removeMateriasListDom(index)});
+    btnAdd.innerText = materia.data.nombre;
+    btnAdd.addEventListener('click', function(){
+      try{
+        HORARIOS_LIST[ACTUAL_HORARIO].agregar(GLOBAL_MATERIAS[index]);
+        $horarioTablaDom.dibujar(HORARIOS_LIST[ACTUAL_HORARIO].materias);
+      }catch(e){
+        console.log(e);
+      }
+    });
+
+    li.appendChild(btnAdd);
+    li.appendChild(btnDelete);
     $ulMateriasList.appendChild(li);
   });
 }
-
 //MARK: POP-UP Materia
 
 const dialogAddMat =  document.getElementById("formAddMateria");
@@ -67,6 +110,7 @@ const dateContainerMat = document.getElementById("addMatFechas");
 const btnAddMat = document.getElementById("addConfirm");
 const btnCancelMat = document.getElementById("addCancel");
 
+// Convierte los datos del POP-UP en un objeto Nodo
 function parseDataToNodos(data){
   const materia = new Materia(data[0],data[1]);
   const dias = [];
@@ -82,10 +126,12 @@ function parseDataToNodos(data){
   return new Nodo(GLOBAL_IdCounter,Number(data[3]),materia,dias,coloresPastel[0]);
 }
 
+// Mostrar POP-UP de agregar materias
 $btnCrearMateria.addEventListener('click',function(){
   dialogAddMat.showModal();
 });
 
+// Validar y enviar datos del POP-UP de agregar materias
 btnAddMat.addEventListener("click", function(){
   try{
     if(nombreAddMat.value.trim() === ""){
@@ -137,10 +183,23 @@ btnAddMat.addEventListener("click", function(){
       fechas,
       creditosAddMat.value
     ];
+    
+    const newData = parseDataToNodos(data);
+    const seen = new Set();
+    newData.posiciones.forEach((subArr, idx) => {
+      const key = JSON.stringify(subArr);
+      if (seen.has(key)) {
+        throw new LogicalHourError(
+          "Hay una franja que está colisionando con otra",
+          dateContainerMat.querySelectorAll("div")[idx]);
+        }
+        seen.add(key);
+      });
+      
     nombreAddMat.value = '';
     grupoAddMat.value = '';
     dateContainerMat.innerHTML = "";
-    GLOBAL_MATERIAS.push(parseDataToNodos(data));
+    GLOBAL_MATERIAS.push(newData);
     dialogAddMat.close();
     updateMateriasListDom();
   }catch(e){
@@ -156,10 +215,12 @@ btnAddMat.addEventListener("click", function(){
   }
 });
 
+// Cerrar POP-UP de agregar materias
 btnCancelMat.addEventListener("click", function(){
   dialogAddMat.close();
 });
 
+// Gestiona configuracion de agregar dias y horas del POP-UP de agregar materias
 btnDateMat.addEventListener("click", function(e){
   // Label Day
   const labelDay = document.createElement("label");
@@ -243,21 +304,3 @@ btnDateMat.addEventListener("click", function(e){
 
   dateContainerMat.appendChild(div);
 });
-
-/* 
-const test = new Horario(coloresPastel,9);
-const testDom = new TablaDom($horarioTabla);
-
-const caclulo = new Nodo(100,3,new Materia("calc","xd"),[[1,2],[2,2]]);
-const caclulo2 = new Nodo(300,3,new Materia("calc2","xd"),[[1,2],[2,2]]);
-const fisica = new Nodo(200,3,new Materia("fis","xd"),[[1,3],[3,2]]);
-
-
-test.agregar(caclulo)
-test.agregar(fisica)
-test.agregar(caclulo2)
-//test.eliminar(100)
-
-testDom.dibujar(test.materias)
-//test._printLista()
-*/

@@ -1,6 +1,6 @@
 //MARK: Clases DOM
 
-class ItemDom {
+class TimeSlotDom {
   /**
    * Clase auxiliar para controlar la informacion mostrada en la UI del horario
    * 
@@ -11,37 +11,53 @@ class ItemDom {
    * @param {Element} btnInfo: Button to show info about the subject.
    * @param {Element} btnBorrar: Button to remove the subject.
   */
-  constructor(){
+  constructor(callback){
     this.isEmpty = true;
     this.data = null;
     this.nombre = "Materia";
     this.grupo = "Grupo";
     this.btnInfo = document.createElement('button');
+    this.btnInfo.innerText="a";
     this.btnBorrar = document.createElement('button');
+    this.btnBorrar.innerText="x";
+    this.callback = callback;
   }
 
   /**
    * Metodo para agregar los datos de una materia
    * @param {Materia} data: Los datos de la materia
   */ 
-  addMateria(data){
+  clearData(){
+    this.callback(this.data.id);
+    this.isEmpty = true;
+    this.data = null;
+    this.nombre = "Materia";
+    this.grupo = "Grupo";
+  }
+
+  addSlot(data){
     this.isEmpty = false;
     this.data = data;
-    this.nombre = data.nombre;
-    this.grupo = data.grupo;
+    this.nombre = data.data.nombre;
+    this.grupo = data.data.grupo;
 
-    this.btnInfo.addEventListener('click',function(){
-      console.log(data);
+    this.btnInfo.addEventListener('click',()=>{
+      if(!this.isEmpty){
+        console.log(this.data);
+      }
     });
 
-    this.btnBorrar.addEventListener('click',function(){
-      console.log('borrar');
+
+    this.btnBorrar.addEventListener('click',()=>{
+      if(!this.isEmpty){
+        this.clearData();
+      }
     });
   }
 
   /**
    * Metodo que renderiza la informacion de la casilla del horario
-   * @returns Div Element
+   * @returns {Element} Div Element
    */
   render(){
     const div = document.createElement('div');
@@ -67,8 +83,9 @@ class TablaDom {
    * 
    * @param {Element} tabla: Elemento Tabla del DOM.
   */
-  constructor(tabla){
+  constructor(tabla, callback){
     this.$tabla = tabla;
+    this.callback = callback;
   }
 
   /**
@@ -78,15 +95,17 @@ class TablaDom {
   */
   dibujar(datos){
     this.$tabla.innerHTML = "";
-    const auxTabla = Array.from({ length: 10 }, () => Array.from({ length: 6 }, () => new ItemDom()));
+    const auxTabla = Array.from(
+      { length: 10 }, () => Array.from({ length: 6 }, () => new TimeSlotDom(this.callback))
+    );
 
     datos.forEach(nodo => {
       nodo.posiciones.forEach( ([hora,dia]) => {
-        auxTabla[hora][dia].addMateria(nodo.data);
+        auxTabla[hora][dia].addSlot(nodo);
       });
     });
     
-    console.table(auxTabla)
+    //console.table(auxTabla)
 
     for (let hora = 0; hora < auxTabla.length; hora++) {
       const fila = document.createElement("tr");
@@ -102,4 +121,4 @@ class TablaDom {
   }
 }
 
-export {ItemDom, TablaDom}
+export {TimeSlotDom, TablaDom}

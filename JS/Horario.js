@@ -83,7 +83,7 @@ class Horario{
         });
       });
     }catch(e){
-      //throw e;
+      throw e;
     }finally{
       if (!this.isColide) {
         this.materias.push(nodo);
