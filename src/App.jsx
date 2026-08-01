@@ -62,14 +62,6 @@ function App() {
         autor="Sergio Palacios"
       />
 
-      <HorarioTabs
-        tabs={tabs}
-        activoId={tabActivoId}
-        onActivar={activarTab}
-        onCerrar={cerrarTab}
-        onCrear={()=>setModalNuevoTab(true)}
-      />
-
       <HorarioAside>
         <HorarioBtnNewMat onClick={()=>setModalAbierto(true)}/>
         <HorarioList
@@ -80,6 +72,13 @@ function App() {
       </HorarioAside>
 
       <HorarioMain>
+        <HorarioTabs
+          tabs={tabs}
+          activoId={tabActivoId}
+          onActivar={activarTab}
+          onCerrar={cerrarTab}
+          onCrear={()=>setModalNuevoTab(true)}
+        />
         <HorarioTable
           conflictos={conflictos}
           onQuitar={quitarDelTablero}

@@ -14,7 +14,7 @@ const FormNuevoTab = ({ onCreate })=>{
     <form onSubmit={handleSubmit}>
       <div className="campo">
         <label>
-          <span>Nombre del horario</span>
+          <span>Nombre del horario <i>(opcional)</i></span>
           <input
             type="text"
             autoFocus

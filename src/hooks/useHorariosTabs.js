@@ -26,8 +26,16 @@ const useHorariosTabs = (materiasIniciales = []) => {
   };
 
   const cerrarTab = (id) => {
-    if (tabs.length <= 1) return;
+    if (tabs.length <= 1) {
+      alert ("Debe haber un horario disponible")
+      return;
+    }
+
     const indice = tabs.findIndex((tab) => tab.id === id);
+    
+    if (!confirm("Desea borrar " + tabs[indice].nombre + "?")) return;
+    console.log(tabs[indice]);
+    
     if (indice === -1) return;
     const proximos = tabs.filter((tab) => tab.id !== id);
     setTabs(proximos);
