@@ -33,6 +33,77 @@ header h1 { margin: 0; }
 
 header span { color: #6b7280; }
 
+.tabs-horarios {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.tab-horario {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--color-borde);
+  border-radius: 6px;
+  background: var(--color-superficie);
+  overflow: hidden;
+}
+
+.tab-horario.activa {
+  border-color: var(--color-primario);
+  background: var(--color-primario);
+}
+
+.tab-horario button {
+  border: 0;
+  background: transparent;
+  padding: 8px 12px;
+}
+
+.tab-horario .tab-nombre {
+  font-weight: 600;
+}
+
+.tab-horario .tab-cerrar {
+  color: #6b7280;
+  line-height: 1;
+  padding: 8px 10px;
+}
+
+.tab-horario .tab-cerrar:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.tab-horario .tab-cerrar:disabled {
+  cursor: default;
+  opacity: 0.35;
+}
+
+.tab-horario.activa .tab-nombre,
+.tab-horario.activa .tab-cerrar {
+  color: #fff;
+}
+
+.tab-horario.activa .tab-cerrar:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.tab-nueva {
+  border: 1px dashed var(--color-borde);
+  background: var(--color-superficie);
+  border-radius: 6px;
+  color: var(--color-primario);
+  font-size: 1.2em;
+  line-height: 1;
+  padding: 0 14px;
+}
+
+.tab-nueva:hover {
+  border-color: var(--color-primario);
+  background: #eef3fe;
+}
+
 aside {
   display: flex;
   flex-direction: column;

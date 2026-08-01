@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 
-const HorarioModal = ({ abierto, onCerrar, children })=>{
+const HorarioModal = ({ abierto, onCerrar, children, titulo = "Nueva materia" })=>{
   useEffect(() => {
     if (!abierto) return;
     const manejarTecla = (evento) => {
@@ -19,9 +19,9 @@ const HorarioModal = ({ abierto, onCerrar, children })=>{
         if (evento.target === evento.currentTarget) onCerrar();
       }}
     >
-      <div className="modal" role="dialog" aria-modal="true" aria-label="Nueva materia">
+      <div className="modal" role="dialog" aria-modal="true" aria-label={titulo}>
         <header className="modal-cabecera">
-          <h2>Nueva materia</h2>
+          <h2>{titulo}</h2>
           <button
             type="button"
             className="modal-cerrar"

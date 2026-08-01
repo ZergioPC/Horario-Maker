@@ -2,6 +2,7 @@ import { useState } from 'react';
 import './App.css';
 
 import { HorarioHeader } from './components/HorarioHeader';
+import { HorarioTabs } from './components/HorarioTabs';
 import { HorarioAside } from './components/HorarioAside';
 import { HorarioBtnNewMat } from './components/HorarioBtnNewMat';
 import { HorarioList } from './components/HorarioList';
@@ -9,8 +10,9 @@ import { HorarioMain } from './components/HorarioMain';
 import { HorarioTable } from './components/HorarioTable';
 import { HorarioModal } from './components/HorarioModal';
 import { HorarioFormMat } from './components/HorarioFormMat';
+import { HorarioModalNuevoTab } from './components/HorarioModalNuevoTab';
 
-import { useHorarios } from './hooks/useHorarios';
+import { useHorariosTabs } from './hooks/useHorariosTabs';
 
 const TEMP_DATA = [
   {
@@ -36,15 +38,22 @@ const TEMP_DATA = [
 
 function App() {
   const [modalAbierto, setModalAbierto] = useState(false);
+  const [modalNuevoTab, setModalNuevoTab] = useState(false);
 
   const {
     materias,
-    idsEnTablero,
+    tabs,
+    tabActivoId,
     conflictos,
+    crearTab,
+    cerrarTab,
+    activarTab,
     crearMateria,
     toggleEnTablero,
     quitarDelTablero,
-  } = useHorarios(TEMP_DATA);
+  } = useHorariosTabs(TEMP_DATA);
+
+  const tabActivo = tabs.find((tab) => tab.id === tabActivoId) ?? tabs[0];
 
   return (
     <>
@@ -53,11 +62,19 @@ function App() {
         autor="Sergio Palacios"
       />
 
+      <HorarioTabs
+        tabs={tabs}
+        activoId={tabActivoId}
+        onActivar={activarTab}
+        onCerrar={cerrarTab}
+        onCrear={()=>setModalNuevoTab(true)}
+      />
+
       <HorarioAside>
         <HorarioBtnNewMat onClick={()=>setModalAbierto(true)}/>
         <HorarioList
           materias={materias}
-          idsEnTablero={idsEnTablero}
+          idsEnTablero={tabActivo?.idsEnTablero ?? []}
           onToggle={toggleEnTablero}
         />
       </HorarioAside>
@@ -80,6 +97,15 @@ function App() {
           }}
         />
       </HorarioModal>
+
+      <HorarioModalNuevoTab
+        abierto={modalNuevoTab}
+        onCerrar={()=>setModalNuevoTab(false)}
+        onCreate={(nombre)=>{
+          crearTab(nombre);
+          setModalNuevoTab(false);
+        }}
+      />
     </>
   )
 }
