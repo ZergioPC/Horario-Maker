@@ -49,6 +49,7 @@ function App() {
     cerrarTab,
     activarTab,
     crearMateria,
+    eliminarMateria,
     toggleEnTablero,
     quitarDelTablero,
   } = useHorariosTabs(TEMP_DATA);
@@ -68,6 +69,7 @@ function App() {
           materias={materias}
           idsEnTablero={tabActivo?.idsEnTablero ?? []}
           onToggle={toggleEnTablero}
+          onEliminar={eliminarMateria}
         />
       </HorarioAside>
 

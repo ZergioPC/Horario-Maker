@@ -204,6 +204,32 @@ aside > button:hover {
   font-size: 0.75em;
 }
 
+.fila-materia {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.fila-materia .item-materia {
+  flex: 1;
+  min-width: 0;
+}
+
+.item-borrar {
+  flex-shrink: 0;
+  background: transparent;
+  color: #9ca3af;
+  border: 0;
+  border-radius: 3px;
+  line-height: 1;
+  padding: 4px 6px;
+}
+
+.item-borrar:hover {
+  background: rgba(255, 0, 0, 0.1);
+  color: var(--color-conflicto);
+}
+
 main {
   background: var(--color-superficie);
   border: 1px solid var(--color-borde);

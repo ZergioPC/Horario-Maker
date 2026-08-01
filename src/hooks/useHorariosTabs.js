@@ -66,6 +66,21 @@ const useHorariosTabs = (materiasIniciales = []) => {
     }));
   };
 
+  const eliminarMateria = (id) => {
+    const indice = materias.findIndex((tab) => tab.id === id);
+    if (!confirm(
+      "¿Eliminar "+ materias[indice].nombre +"-"+ materias[indice].grupo +"?"
+    )) return;
+
+    setMaterias((prev) => prev.filter((materia) => materia.id !== id));
+    setTabs((prev) =>
+      prev.map((tab) => ({
+        ...tab,
+        idsEnTablero: tab.idsEnTablero.filter((pid) => pid !== id),
+      }))
+    );
+  };
+
   const quitarDelTablero = (id) => {
     actualizarTab(tabActivo.id, (tab) => ({
       ...tab,
@@ -87,6 +102,7 @@ const useHorariosTabs = (materiasIniciales = []) => {
     cerrarTab,
     activarTab,
     crearMateria,
+    eliminarMateria,
     toggleEnTablero,
     quitarDelTablero,
   };
