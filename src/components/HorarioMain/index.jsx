@@ -1,13 +1,8 @@
 import React from "react";
 
-const HorarioMain = ({ renderTabs, renderTable })=>{
-  //console.log(children);
-  
+const HorarioMain = ({ children })=>{
   return (
-    <main>
-      {renderTabs()}
-      {renderTable()}
-    </main>
+    <main>{children}</main>
   );
 }
 

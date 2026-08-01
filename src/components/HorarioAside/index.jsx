@@ -1,11 +1,8 @@
 import React from "react";
 
-const HorarioAside = ({ renderBtn, renderList })=>{  
+const HorarioAside = ({ children })=>{
   return (
-    <aside>
-      {renderBtn()}
-      {renderList()}
-    </aside>
+    <aside>{children}</aside>
   );
 }
 

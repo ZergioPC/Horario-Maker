@@ -1,10 +1,8 @@
 import React from "react";
 
-const HorarioBtnNewMat = ()=>{
+const HorarioBtnNewMat = ({ onClick })=>{
   return (
-    <button
-      onClick={()=>console.log("nueva materia")}
-    >Nueva materia</button>
+    <button onClick={onClick}>Nueva materia</button>
   );
 }
 
