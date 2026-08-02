@@ -14,28 +14,6 @@ import { HorarioModalNuevoTab } from './components/HorarioModalNuevoTab';
 
 import { useHorariosTabs } from './hooks/useHorariosTabs';
 
-const TEMP_DATA = [
-  {
-    id: crypto.randomUUID(),
-    nombre: "Sociales",
-    grupo: "MUL A",
-    horas: [
-      {dia:"LU", hora:8},
-      {dia:"LU", hora:9},
-      {dia:"LU", hora:10},
-    ]
-  },{
-    id: crypto.randomUUID(),
-    nombre: "Matematicas",
-    grupo: "MUL B",
-    horas: [
-      {dia:"MA", hora:14},
-      {dia:"MA", hora:15},
-      {dia:"MI", hora:14},
-    ]
-  }
-]
-
 function App() {
   const [modalAbierto, setModalAbierto] = useState(false);
   const [modalNuevoTab, setModalNuevoTab] = useState(false);
@@ -52,7 +30,7 @@ function App() {
     eliminarMateria,
     toggleEnTablero,
     quitarDelTablero,
-  } = useHorariosTabs(TEMP_DATA);
+  } = useHorariosTabs();
 
   const tabActivo = tabs.find((tab) => tab.id === tabActivoId) ?? tabs[0];
 

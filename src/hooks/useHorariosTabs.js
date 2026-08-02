@@ -1,13 +1,25 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
+import { useLocalStorageState } from './useLocalStorageState';
 import { getConflicts } from '../utils/horarios';
 
-const useHorariosTabs = (materiasIniciales = []) => {
-  const [materias, setMaterias] = useState(materiasIniciales);
-  const [tabs, setTabs] = useState(() => [
-    { id: crypto.randomUUID(), nombre: 'Horario 1', idsEnTablero: [] },
-  ]);
-  const [tabActivoId, setTabActivoId] = useState(() => tabs[0].id);
+const CLAVE_MATERIAS = 'horario-maker:materias';
+const CLAVE_TABS = 'horario-maker:tabs';
+const CLAVE_TAB_ACTIVO = 'horario-maker:tabActivoId';
+
+const normalizarTabs = (tabs) =>
+  Array.isArray(tabs) && tabs.length > 0
+    ? tabs
+    : [{ id: crypto.randomUUID(), nombre: 'Horario 1', idsEnTablero: [] }];
+
+const useHorariosTabs = () => {
+  const [materias, setMaterias] = useLocalStorageState(CLAVE_MATERIAS, []);
+  const [tabs, setTabs] = useLocalStorageState(CLAVE_TABS, normalizarTabs, normalizarTabs);
+  const [tabActivoId, setTabActivoId] = useLocalStorageState(
+    CLAVE_TAB_ACTIVO,
+    () => tabs[0].id,
+    (id) => (tabs.some((tab) => tab.id === id) ? id : tabs[0].id)
+  );
 
   const tabActivo = tabs.find((tab) => tab.id === tabActivoId) ?? tabs[0];
 
