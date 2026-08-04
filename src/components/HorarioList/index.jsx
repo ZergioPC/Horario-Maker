@@ -22,7 +22,7 @@ const HorarioList = ({ materias, idsEnTablero, onToggle, onEliminar })=>{
               >
                 <span className="item-nombre">{materia.nombre}</span>
                 <span className="item-grupo">{materia.grupo}</span>
-                <span className="item-horas">{resumenHoras(materia.horas)}</span>
+                {/* <span className="item-horas">{resumenHoras(materia.horas)}</span> */}
               </button>
               <button
                 type="button"

@@ -34,9 +34,49 @@ header { grid-column: 1 / 2; grid-row: 1 / 2; }
 aside { grid-column: 1 / 2; grid-row: 2 / 3; }
 main { grid-column: 2 / 3; grid-row: 1 / 3; }
 
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 header h1 { margin: 0; }
 
 header span { color: #6b7280; }
+
+.header-titulo {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  font-size: 0.7em;
+}
+
+.header-botones {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.header-icono {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-superficie);
+  color: var(--color-primario);
+  border: 1px solid var(--color-borde);
+  border-radius: 50%;
+  font-size: 1em;
+  line-height: 1;
+  padding: 0;
+}
+
+.header-icono:hover {
+  border-color: var(--color-primario);
+  background: #eef3fe;
+}
 
 .tabs-horarios {
   display: flex;

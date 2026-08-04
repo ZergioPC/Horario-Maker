@@ -11,12 +11,16 @@ import { HorarioTable } from './components/HorarioTable';
 import { HorarioModal } from './components/HorarioModal';
 import { HorarioFormMat } from './components/HorarioFormMat';
 import { HorarioModalNuevoTab } from './components/HorarioModalNuevoTab';
+import { HorarioAbout } from './components/HorarioAbout';
+import { HorarioAjustes } from './components/HorarioAjustes';
 
 import { useHorariosTabs } from './hooks/useHorariosTabs';
 
 function App() {
   const [modalAbierto, setModalAbierto] = useState(false);
   const [modalNuevoTab, setModalNuevoTab] = useState(false);
+  const [modalAbout, setModalAbout] = useState(false);
+  const [modalAjustes, setModalAjustes] = useState(false);
 
   const {
     materias,
@@ -39,6 +43,8 @@ function App() {
       <HorarioHeader
         titulo="Horario Maker"
         autor="Sergio Palacios"
+        onAbout={()=>setModalAbout(true)}
+        onAjustes={()=>setModalAjustes(true)}
       />
 
       <HorarioAside>
@@ -84,6 +90,16 @@ function App() {
           crearTab(nombre);
           setModalNuevoTab(false);
         }}
+      />
+
+      <HorarioAbout
+        abierto={modalAbout}
+        onCerrar={()=>setModalAbout(false)}
+      />
+
+      <HorarioAjustes
+        abierto={modalAjustes}
+        onCerrar={()=>setModalAjustes(false)}
       />
     </>
   )
