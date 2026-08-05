@@ -66,7 +66,8 @@ const HorarioFormMat = ({ onCrearMateria })=>{
 
       <fieldset>
         <legend>Horas</legend>
-        <table className="matriz">
+        <div className="matriz-scroll">
+          <table className="matriz">
           <thead>
             <tr>
               <th>Hora</th>
@@ -97,6 +98,7 @@ const HorarioFormMat = ({ onCrearMateria })=>{
             ))}
           </tbody>
         </table>
+        </div>
         {errores.horas && <span className="error">{errores.horas}</span>}
       </fieldset>
 

@@ -21,6 +21,7 @@ function App() {
   const [modalNuevoTab, setModalNuevoTab] = useState(false);
   const [modalAbout, setModalAbout] = useState(false);
   const [modalAjustes, setModalAjustes] = useState(false);
+  const [asideAbierto, setAsideAbierto] = useState(false);
 
   const {
     materias,
@@ -47,7 +48,11 @@ function App() {
         onAjustes={()=>setModalAjustes(true)}
       />
 
-      <HorarioAside>
+      <HorarioAside
+        abierto={asideAbierto}
+        onAbrir={()=>setAsideAbierto(true)}
+        onCerrar={()=>setAsideAbierto(false)}
+      >
         <HorarioBtnNewMat onClick={()=>setModalAbierto(true)}/>
         <HorarioList
           materias={materias}
@@ -56,7 +61,6 @@ function App() {
           onEliminar={eliminarMateria}
         />
       </HorarioAside>
-
       <HorarioMain>
         <HorarioTabs
           tabs={tabs}

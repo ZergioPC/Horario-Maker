@@ -10,6 +10,7 @@ import { HorarioItem } from "../HorarioItem";
 
 const HorarioTable = ({ conflictos, onQuitar })=>{
   return (
+    <div className="tabla-scroll">
     <table className="tabla-horario">
       <thead>
         <tr>
@@ -45,6 +46,7 @@ const HorarioTable = ({ conflictos, onQuitar })=>{
         ))}
       </tbody>
     </table>
+    </div>
   );
 }
 

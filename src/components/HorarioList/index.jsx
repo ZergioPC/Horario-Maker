@@ -2,8 +2,8 @@ import React from "react";
 
 import { NOMBRES_DIAS } from "../../constants/horarios";
 
-const resumenHoras = (horas) =>
-  horas.map(({ dia, hora }) => `${NOMBRES_DIAS[dia]} ${hora}:00`).join(", ");
+// const resumenHoras = (horas) =>
+//   horas.map(({ dia, hora }) => `${NOMBRES_DIAS[dia]} ${hora}:00`).join(", ");
 
 const HorarioList = ({ materias, idsEnTablero, onToggle, onEliminar })=>{
   return (
