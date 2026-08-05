@@ -1,10 +1,5 @@
 import React from "react";
 
-import { NOMBRES_DIAS } from "../../constants/horarios";
-
-// const resumenHoras = (horas) =>
-//   horas.map(({ dia, hora }) => `${NOMBRES_DIAS[dia]} ${hora}:00`).join(", ");
-
 const HorarioList = ({ materias, idsEnTablero, onToggle, onEliminar })=>{
   return (
     <ul className="lista-materias">
@@ -22,7 +17,6 @@ const HorarioList = ({ materias, idsEnTablero, onToggle, onEliminar })=>{
               >
                 <span className="item-nombre">{materia.nombre}</span>
                 <span className="item-grupo">{materia.grupo}</span>
-                {/* <span className="item-horas">{resumenHoras(materia.horas)}</span> */}
               </button>
               <button
                 type="button"
